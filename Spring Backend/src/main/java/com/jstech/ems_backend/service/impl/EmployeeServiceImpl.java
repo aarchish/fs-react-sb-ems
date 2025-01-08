@@ -1,9 +1,11 @@
 package com.jstech.ems_backend.service.impl;
 
 import com.jstech.ems_backend.dto.EmployeeDto;
+import com.jstech.ems_backend.entities.Department;
 import com.jstech.ems_backend.entities.Employee;
 import com.jstech.ems_backend.exceptions.ResourceNotFoundException;
 import com.jstech.ems_backend.mapper.EmployeeMappper;
+import com.jstech.ems_backend.repository.DepartmentRepository;
 import com.jstech.ems_backend.repository.EmployeeRepository;
 import com.jstech.ems_backend.service.EmployeeService;
 import lombok.AllArgsConstructor;
@@ -17,11 +19,17 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
+    private DepartmentRepository departmentRepository;
 
-    @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         Employee employee = EmployeeMappper.mapToEmployee(employeeDto);
+
+        Department department = departmentRepository.findById(employeeDto.getDeptId())
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + employeeDto.getDeptId()));
+
+        employee.setDepartment(department);
         Employee savedEmployee = employeeRepository.save(employee);
+
         return EmployeeMappper.mapToEmployeeDto(savedEmployee);
     }
 
@@ -40,7 +48,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
+
+        Department department = departmentRepository.findById(employeeDto.getDeptId())
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + employeeDto.getDeptId()));
+
+        employee.setDepartment(department);
         Employee updatedEmployee = employeeRepository.save(employee);
+        
         return EmployeeMappper.mapToEmployeeDto(updatedEmployee);
     }
 

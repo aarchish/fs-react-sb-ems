@@ -16,11 +16,16 @@ public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long deptId;
 
     @Column(name = "deptartment_name")
     private String deptName;
 
     @Column(name = "deptartment_description")
     private String deptDescription;
+
+    public Department(String it, String informationTechnology) {
+        this.deptName = it;
+        this.deptDescription = informationTechnology;
+    }
 }
