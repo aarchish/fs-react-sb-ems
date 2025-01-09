@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React, {useEffect, useState} from 'react'
-import { listEmployees, deleteEmployee } from '../services/EmployeeService'
 import { useNavigate } from 'react-router-dom'
+
+import { listEmployees, deleteEmployee } from '../services/EmployeeService'
 
 const ListEmployeeComponent = () => {
 
@@ -54,6 +55,7 @@ const ListEmployeeComponent = () => {
                     <th>Employee First Name</th>
                     <th>Employee Last Name</th>
                     <th>Employee Email Id</th>
+                    <th>Department</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -66,6 +68,7 @@ const ListEmployeeComponent = () => {
                                 <td>{employee.firstName}</td>
                                 <td>{employee.lastName}</td>
                                 <td>{employee.email}</td>
+                                <td>{employee.department ? employee.department.deptName : 'N/A'}</td>
                                 <td>
                                     <button className="btn btn-info" onClick={ () => updateEmployee(employee.empId)}>Update</button>
                                     <button 

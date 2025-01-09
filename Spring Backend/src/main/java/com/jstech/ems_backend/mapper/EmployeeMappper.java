@@ -1,6 +1,7 @@
 package com.jstech.ems_backend.mapper;
 
 import com.jstech.ems_backend.dto.EmployeeDto;
+import com.jstech.ems_backend.entities.Department;
 import com.jstech.ems_backend.entities.Employee;
 
 public class EmployeeMappper {
@@ -11,7 +12,7 @@ public class EmployeeMappper {
         employeeDto.setFirstName(employee.getFirstName());
         employeeDto.setLastName(employee.getLastName());
         employeeDto.setEmail(employee.getEmail());
-        employeeDto.setDeptId(employee.getDepartment().getDeptId());
+        employeeDto.setDepartment(employee.getDepartment());
         return employeeDto;
     }
 
@@ -21,6 +22,8 @@ public class EmployeeMappper {
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
+        Department department = (employee.getDepartment() != null) ? employee.getDepartment() : new Department();
+        employee.setDepartment(department);
         return employee;
     }
 }

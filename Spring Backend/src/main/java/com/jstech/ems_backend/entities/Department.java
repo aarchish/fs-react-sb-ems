@@ -1,5 +1,6 @@
 package com.jstech.ems_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,11 +13,12 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "departments")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long deptId;
+    private Long deptId;
 
     @Column(name = "deptartment_name")
     private String deptName;

@@ -2,7 +2,12 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/departments";
 
-export const listDepartments = () => { return axios.get(API_URL) };
+export const listDepartments = () => {
+    return axios.get(API_URL).catch((error) => {
+      console.error('Error fetching departments:', error);
+      throw error;
+    });
+  };
 
 export const createDepartment = (department) => { return axios.post(API_URL, department) };
 

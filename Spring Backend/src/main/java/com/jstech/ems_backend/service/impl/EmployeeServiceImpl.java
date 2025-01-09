@@ -24,8 +24,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         Employee employee = EmployeeMappper.mapToEmployee(employeeDto);
 
-        Department department = departmentRepository.findById(employeeDto.getDeptId())
-                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + employeeDto.getDeptId()));
+        Department department = departmentRepository.findById(employeeDto.getDepartment().getDeptId())
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + employeeDto.getDepartment().getDeptId()));
 
         employee.setDepartment(department);
         Employee savedEmployee = employeeRepository.save(employee);
@@ -49,12 +49,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
 
-        Department department = departmentRepository.findById(employeeDto.getDeptId())
-                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + employeeDto.getDeptId()));
+        Department department = departmentRepository.findById(employeeDto.getDepartment().getDeptId())
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + employeeDto.getDepartment().getDeptId()));
 
         employee.setDepartment(department);
         Employee updatedEmployee = employeeRepository.save(employee);
-        
+
         return EmployeeMappper.mapToEmployeeDto(updatedEmployee);
     }
 

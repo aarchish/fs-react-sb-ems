@@ -1,16 +1,47 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react'
-import { createEmployee, getEmployee, updateEmployee } from '../services/EmployeeService'
 import { useNavigate, useParams } from 'react-router-dom'
+import { createEmployee, getEmployee, updateEmployee } from '../services/EmployeeService'
+import { listDepartments } from '../services/DepartmentService'
 
 const EmployeeComponent = () => {
 
   const[firstName, setFirstName] = useState('')
   const[lastName, setLastName] = useState('')
   const[email, setEmail] = useState('')
+  const[department, setDepartment] = useState({ deptId: '', deptName: '' })
+  const[departments, setDepartments] = useState([])
 
   const navigate = useNavigate()
   const { empId } = useParams()
+
+  useEffect(() => {
+    listDepartments().then( (response) => {
+      setDepartments(response.data) })
+    .catch( error => {
+      console.error(error) }
+    )
+  }, [])
+
+  useEffect(() => {
+    if(empId) {
+      getEmployee(empId)
+      .then(
+        response => {
+          let employee = response.data
+          setFirstName(employee.firstName)
+          setLastName(employee.lastName)
+          setEmail(employee.email)
+          setDepartment(employee.department)
+        }
+      )
+      .catch(
+        error => {
+          console.error(error)
+        }
+      )
+    }
+  }, [empId])
 
   function handleFirstName(e){
     setFirstName(e.target.value)
@@ -24,38 +55,37 @@ const EmployeeComponent = () => {
     setEmail(e.target.value)
   }
 
+  function handleDepartment(e){
+    const selectedDept = departments.find(dept => dept.deptId === parseInt(e.target.value));
+    setDepartment(selectedDept);
+  }
+
   function saveOrUpdateEmployee(e){
     e.preventDefault()
     
     if(validateForm()) {
-      let employee = {firstName, lastName, email}
+      let employee = {firstName, lastName, email, department}
     
       if(empId) {
-        updateEmployee(empId, employee)
-        .then( (response) => {
-          console.log(response.data)
-          navigate('/employees')
-        })
-        .catch( error => {
+        updateEmployee(empId, employee).then(
+          response => {
+            console.log(response.data)
+            navigate('/employees')
+          }
+        ).catch(error => {
           console.error(error)
         })
-      }
-    
-      else {
-        createEmployee(employee)
-        .then(
+      } else {
+        createEmployee(employee).then(
           response => { 
             console.log(response.data) 
             navigate('/employees')
-        })
-        .catch(
-          error => {
-            console.error(error)
-
+          }
+        ).catch(error => {
+          console.error(error)
         })
       }
-    }
-    else {
+    } else {
       console.log('Form has errors')
     }
   }
@@ -63,7 +93,8 @@ const EmployeeComponent = () => {
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
-    email: ''
+    email: '',
+    department: ''
   });
 
   function validateForm() {
@@ -85,42 +116,21 @@ const EmployeeComponent = () => {
       errors["email"] = "*Please enter your email.";
     }
 
+    if (!department.deptId) {
+      formIsValid = false;
+      errors["department"] = "*Please select a department.";
+    }
+
     setErrors(errors);
     return formIsValid;
   }
-
-  function pageTitle() {
-    if(empId) return <h2 className='text-center'>Update Employee</h2>
-    else return <h2 className='text-center'>Add Employee</h2>
-  }
-
-  useEffect(() => {
-    if(empId) {
-      getEmployee(empId)
-      .then(
-        response => {
-          let employee = response.data
-          setFirstName(employee.firstName)
-          setLastName(employee.lastName)
-          setEmail(employee.email)
-        }
-      )
-      .catch(
-        error => {
-          console.error(error)
-        }
-      )
-    }
-  }, [empId])
 
   return (
     <div className='container'>
       <br></br>
       <div className='row'>
         <div className='card col-md-6 offset-md-3 offset-md-3'>
-          {
-            pageTitle()
-          }
+          <h3 className='text-center'>{empId ? 'Update Employee' : 'Add Employee'}</h3>
           <div className='card-body'>
             <form onSubmit={saveOrUpdateEmployee}>
               <div className='form-group'>
@@ -162,7 +172,25 @@ const EmployeeComponent = () => {
                   {errors.email && <div className='invalid-feedback'>{errors.email}</div>}
                 </label>
               </div>
-              <button type='submit' className='btn btn-primary'>Submit</button>
+              <div className='form-group'>
+                <label className='form-label'>Department:
+                  <select
+                    name='department'
+                    className={`form-control ${errors.department ? 'is-invalid' : ''}`}
+                    value={department.deptId}
+                    onChange={handleDepartment}
+                  >
+                    <option value=''>Select Department</option>
+                    {departments.map(department => (
+                      <option key={department.deptId} value={department.deptId}>
+                        {department.deptName}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.department && <div className='invalid-feedback'>{errors.department}</div>}
+                </label>
+              </div>
+              <button type='submit' className='btn btn-primary'>{empId ? 'Update' : 'Submit'}</button>
             </form>
           </div>
         </div>

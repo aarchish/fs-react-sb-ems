@@ -1,5 +1,6 @@
 package com.jstech.ems_backend.dto;
 
+import com.jstech.ems_backend.entities.Department;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeDto {
-    private long empId;
+    private Long empId;
     private String firstName;
     private String lastName;
     private String email;
-    private long deptId;
+    private Department department;
 }
